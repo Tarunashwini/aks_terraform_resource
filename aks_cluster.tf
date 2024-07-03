@@ -3,6 +3,10 @@ resource "azurerm_kubernetes_cluster" "aks_rg" {
   location            = azurerm_resource_group.aks_rg.location
   dns_prefix          = "${azurerm_resource_group.aks_rg.name}-nrg"
   resource_group_name = azurerm_resource_group.aks_rg.name
+  
+  identity {
+    type = "SystemAssigned"
+  }
 
   default_node_pool {
     name               = "systempool"
