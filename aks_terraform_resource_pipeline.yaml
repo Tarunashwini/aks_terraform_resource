@@ -1,0 +1,50 @@
+trigger:
+- master
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+- stage: TerraformValidate
+  jobs:
+    - job: TerraformValidateJob
+      continueOnError: false
+      steps:
+      - task: PublishPipelineArtifact@1
+        displayName: PublishPipeline
+        inputs:
+            targetPath: '$(System.DefaultWorkingDirectory)'
+            artifact: 'terraform-manifest-out'
+            publishLocation: 'pipeline' 
+      
+      - task: TerraformInstaller@2
+        displayName: TerraformInstaller
+        inputs:
+          terraformVersion: 'latest'
+      
+      - task: TerraformCLI@2
+        inputs:
+          command: 'init'
+          backendType: 'azurerm'
+          backendServiceArm: 'rakshitha-azure-connection'
+          backendAzureRmTenantId: '891c82e9-e7db-4f81-a09e-83f834461d34'
+          backendAzureRmSubscriptionId: 'deb71c11-381c-42be-a974-1be8ccfb5955'
+          ensureBackend: true
+          backendAzureRmResourceGroupName: 'Tarun_Resources_rg'
+          backendAzureRmResourceGroupLocation: 'southindia'
+          backendAzureRmStorageAccountName: 'tarunstorageacc'
+          backendAzureRmContainerName: 'terraform-container'
+          backendAzureRmKey: 'aks-base.tfstate'
+          allowTelemetryCollection: false
+      
+      - task: TerraformCLI@2
+        displayName: Terraform Validate
+        inputs:
+          command: 'validate'
+          allowTelemetryCollection: false
+      
+
+
+
+
+ 
