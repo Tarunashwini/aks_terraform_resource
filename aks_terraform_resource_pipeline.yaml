@@ -61,6 +61,7 @@ stages:
               - task: TerraformCLI@2
                 inputs:
                   command: 'plan'
+                  workingDirectory: '$(System.DefaultWorkingDirectory)/'
                   runAzLogin: true
                   allowTelemetryCollection: false
               
