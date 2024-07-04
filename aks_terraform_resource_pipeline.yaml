@@ -38,6 +38,41 @@ stages:
           command: 'validate'
           allowTelemetryCollection: false
       
+- stage: DeployAKSClusters 
+  jobs:
+    - deployment: DeployDevAKSCluster
+      displayName: DeployDevAKSCluster
+      pool:
+        vmImage: 'ubuntu-latest'
+      environment: $(DEV_ENV)
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - task: DownloadSecureFile@1
+                inputs:
+                  secureFile: 'id_rsa.pub'
+              
+              - task: TerraformCLI@2
+                inputs:
+                  command: 'init'
+                  allowTelemetryCollection: false
+              
+              - task: TerraformCLI@2
+                inputs:
+                  command: 'plan'
+                  runAzLogin: true
+                  commandOptions: '-var ssh_public_key=$(sshkey.secureFilePath) -var environment=$(DEV_ENV) -out $(Pipeline.Workspace)/$(DEV_ENV)-$(Build.BuildId).out'
+                  allowTelemetryCollection: false
+              
+              - task: TerraformCLI@2
+                inputs:
+                  command: 'apply'
+                  environmentServiceName: 'rakshitha-azure-connection'
+                  providerAzureRmSubscriptionId: 'deb71c11-381c-42be-a974-1be8ccfb5955'
+                  allowTelemetryCollection: false
+
+      
 
 
 
