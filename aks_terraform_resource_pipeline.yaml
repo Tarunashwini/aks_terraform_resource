@@ -62,7 +62,6 @@ stages:
                 inputs:
                   command: 'plan'
                   runAzLogin: true
-                  commandOptions: '-var ssh_public_key=$(sshkey.secureFilePath) -var environment=$(DEV_ENV) -out $(Pipeline.Workspace)/$(DEV_ENV)-$(Build.BuildId).out'
                   allowTelemetryCollection: false
               
               - task: TerraformCLI@2
